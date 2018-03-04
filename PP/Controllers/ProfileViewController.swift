@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import SwiftyVK
+import HealthKit
 
 class ProfileViewController: UIViewController {
 
@@ -17,13 +19,14 @@ class ProfileViewController: UIViewController {
     
     @IBOutlet var categoriesLabels: [UILabel]!
     
-    let categories = ["Вегетерианское", "Фитнес", "10 минут", "Классическое", "Премиум", "Праздничное"]
+    let categories = ["Вегетарианское", "Фитнес", "10 минут", "Классическое", "Премиум", "Праздничное"]
     
     
     @IBAction func switchHealthKitAccess(_ sender: UISwitch) {
     }
     
     @IBAction func switchVKLogin(_ sender: UIButton) {
+        VK.logOut()
     }
     
     override func viewDidLoad() {

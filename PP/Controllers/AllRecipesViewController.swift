@@ -16,6 +16,9 @@ class AllRecipesViewController: UIViewController, UICollectionViewDelegate, UICo
     @IBOutlet var categoriesButtons: [UIButton]!
     
     var selectedCategory = 0
+    var recipes = [Recipe]()
+    
+    var choosenImage = UIImage.init()
     
     let defaultFont = UIFont(name: "Helvetica", size: 15)
     let selectedFont = UIFont(name: "Helvetica Bold", size: 15)
@@ -45,17 +48,23 @@ class AllRecipesViewController: UIViewController, UICollectionViewDelegate, UICo
 
         }
 
-        //self.navigationController?.setNavigationBarHidden(.yscrollView.panGestureRecognizer.velocity(in: self.collectionView).y > 0, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return recipes.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "recipeCellId", for: indexPath) as! RecipeCollectionViewCell
         
-        cell.displayContent(image: UIImage(named: "fon1")!, title: "Название блюда", time: "10 минут")
+        var image = UIImage(named: "fon1")!
+        
+        let url = URL(string: recipes[indexPath.row].photo)
+        if let data = try? Data(contentsOf: url!) {
+            image = UIImage(data : data)!
+        }
+        
+        cell.displayContent(image: image, title: recipes[indexPath.row].title, time: recipes[indexPath.row].time)
         
         return cell
     }
@@ -65,7 +74,11 @@ class AllRecipesViewController: UIViewController, UICollectionViewDelegate, UICo
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "RecipeSegue", sender: nil)
+        
+        let cv = collectionView.cellForItem(at: indexPath) as! RecipeCollectionViewCell
+        self.choosenImage = cv.imageView.image!
+        performSegue(withIdentifier: "RecipeSegue", sender: recipes[indexPath.row])
+        
     }
 
     
@@ -75,14 +88,17 @@ class AllRecipesViewController: UIViewController, UICollectionViewDelegate, UICo
         self.selectedCategory = sender.tag
     }
  
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if (segue.identifier == "RecipeSegue") {
+            let rec = sender as! Recipe
+            let secondViewController = segue.destination as! RecipeTableViewController
+            secondViewController.image = self.choosenImage
+            secondViewController.recipeTime = rec.time
+            secondViewController.recipeTitle = rec.title
+            secondViewController.ingredients = rec.ingredients
+            secondViewController.instructions = rec.instructions
+            
+        }
     }
-    */
 
 }
